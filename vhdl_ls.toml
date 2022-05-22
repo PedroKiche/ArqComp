@@ -1,0 +1,12 @@
+# auto-generated
+[Libraries]
+work.files = [
+	'ULA.vhd',
+	'ULA_tb.vhd'
+]
+[libraries.work]
+files = [
+	'ULA.vhd',
+	'ULA_tb.vhd'
+]
+# auto-generated-end
