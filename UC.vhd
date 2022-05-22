@@ -6,14 +6,11 @@ entity UC is
     port(
         clk,rst: in STD_LOGIC;
         instruction: in unsigned(15 downto 0);
-        jump_en: out STD_LOGIC;
         data_in_pc: out unsigned(7 downto 0);
         data_out_pc: in unsigned(7 downto 0);
         pc_att: out STD_LOGIC;
         rom_read: out STD_LOGIC;
-        estado: in unsigned(1 downto 0);
-        
-        
+        estado: in unsigned(1 downto 0);        
         reg_wr: out STD_LOGIC;
         ULA_op: out unsigned(1 downto 0);
         ULAsrcB: out STD_LOGIC;
@@ -24,6 +21,7 @@ end entity UC;
 
 architecture a_UC of UC is
     signal opcode: unsigned(5 downto 0);
+    signal jump_en: STD_LOGIC;
 begin
     pc_att <= '1' when estado = "00" else '0';
     rom_read <= '1' when estado = "01" else '0';
@@ -39,7 +37,8 @@ begin
               "10" when opcode(1 downto 0) ="10" else -- and
               "11"; -- maior que
     
-    sel_regA <= instruction(9 downto 7);
+    sel_regA <= "000" when opcode(4 downto 3) = "11" else
+                 instruction(9 downto 7);
     
     sel_regB <= instruction(6 downto 4);
     
@@ -47,6 +46,6 @@ begin
     
     ULAsrcB <= opcode(2);
     
-    reg_wr <= opcode(5);    
+    reg_wr <= opcode(5) when estado ="10" else '0';
     
 end architecture a_UC;

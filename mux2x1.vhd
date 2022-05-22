@@ -5,8 +5,8 @@ use IEEE.numeric_std.all;
 entity mux2x1 is
     port(
         sel               : in STD_LOGIC;
-        data_I0, data_I1  : in signed (15 downto 0);
-        data_O0           : out signed (15 downto 0)
+        data_I0, data_I1  : in unsigned (15 downto 0);
+        data_O0           : out unsigned (15 downto 0)
     );
 end entity mux2x1;
 

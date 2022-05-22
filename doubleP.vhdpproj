@@ -4,6 +4,7 @@
     <File Include="MaquinaEstados.vhd" />
     <File Include="PC.vhd" />
     <File Include="Processador.vhd" />
+    <File Include="Processador_tb.vhd" />
     <File Include="ROM.vhd" />
     <File Include="UC.vhd" />
     <File Include="ULA.vhd" />
@@ -12,6 +13,6 @@
     <File Include="reg16bits.vhd" />
   </ItemGroup>
   <PropertyGroup>
-    <HardwareStartPath>ULA.vhd</HardwareStartPath>
+    <HardwareStartPath>Processador.vhd</HardwareStartPath>
   </PropertyGroup>
 </Project>

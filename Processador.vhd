@@ -1,6 +1,6 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
-use IEEE.numeric_std.all; 
+use IEEE.numeric_std.all;
 
 entity Processador is
     port(
@@ -12,7 +12,7 @@ entity Processador is
         tl_instrucao: out unsigned(15 downto 0);
         tl_Reg1_out: out unsigned(15 downto 0);
         tl_Reg2_out: out unsigned(15 downto 0);
-        tl_ULA_out:  out unsigned(15 downto 0)       
+        tl_ULA_out:  out unsigned(15 downto 0)
     );
 end entity Processador;
 
@@ -41,8 +41,8 @@ architecture a_Processador of Processador is
         port
         (
             clk      : IN STD_LOGIC ;
-            adress   : IN unsigned (6 downto 0);
-            data_ROM : OUT unsigned (16 downto 0);
+            adress   : IN unsigned (7 downto 0);
+            data_ROM : OUT unsigned (15 downto 0);
             rom_read : IN STD_LOGIC
         );
     end component;
@@ -77,9 +77,9 @@ architecture a_Processador of Processador is
         port
         (
             sel     : IN STD_LOGIC ;
-            data_I0 : IN signed (15 downto 0);
-            data_I1 : IN signed (15 downto 0);
-            data_O0 : OUT signed (15 downto 0)
+            data_I0 : IN unsigned (15 downto 0);
+            data_I1 : IN unsigned (15 downto 0);
+            data_O0 : OUT unsigned (15 downto 0)
         );
     end component;
     
@@ -89,7 +89,6 @@ architecture a_Processador of Processador is
             clk         : IN STD_LOGIC ;
             rst         : IN STD_LOGIC ;
             instruction : IN unsigned (15 downto 0);
-            jump_en     : OUT STD_LOGIC ;
             data_in_pc  : OUT unsigned (7 downto 0);
             data_out_pc : IN unsigned (7 downto 0);
             pc_att      : OUT STD_LOGIC ;
@@ -104,10 +103,104 @@ architecture a_Processador of Processador is
         );
     end component;
     
-    
+    signal estado_s, ULA_op_s: unsigned(1 downto 0);
+    signal pc_en_s,rom_read_s, reg_wr_en_s: STD_LOGIC;
+    signal data_in_pc_s, data_out_pc_s: unsigned(7 downto 0);
+    signal sel_reg_wr_s, sel_regA_s, sel_regB_s: unsigned(2 downto 0);
+    signal regA_out_s, regB_out_s, ULA_out_s, instruction_s:unsigned(15 downto 0);
+    signal mux_1_out_s: unsigned(15 downto 0);
+    signal ULA_out_logic_s: STD_LOGIC;
+    signal ULAsrcB_s: STD_LOGIC;
+    signal const: unsigned(15 downto 0);
     
 begin
-
-   
+    maqEstado0: MaquinaEstados
+    port map
+    (
+        clk    => clk,
+        rst    => rst,
+        estado => estado_s
+    );
+    
+    pc0: PC
+    port map
+    (
+        clk_pc      => clk,
+        wr_en       => pc_en_s,
+        rst         => rst,
+        data_in_pc  => data_in_pc_s,
+        data_out_pc => data_out_pc_s
+    );
+    
+    rom0: ROM
+    port map
+    (
+        clk      => clk,
+        adress   => data_out_pc_s,
+        data_ROM => instruction_s,
+        rom_read => rom_read_s
+    );
+    
+    bancoReg0: BancoRegistradores
+    port map
+    (
+        clk           => clk,
+        rst           => rst,
+        wr_en         => reg_wr_en_s,
+        sel_reg_write => sel_reg_wr_s,
+        sel_regA_read => sel_regA_s,
+        sel_regB_read => sel_regB_s,
+        data_in_banco => ULA_out_s,
+        data_out_regA => regA_out_s,
+        data_out_regB => regB_out_s
+    );
+    
+    ula0: ULA
+    port map
+    (
+        ula_in_A         => regA_out_s,
+        ula_in_B         => mux_1_out_s,
+        ula_out          => ULA_out_s,
+        ula_greater_flag => ULA_out_logic_s,
+        sel_op           => ULA_op_s
+    );
+    
+    mux2x1_1: mux2x1
+    port map
+    (
+        sel     => ULAsrcB_s,
+        data_I0 => regB_out_s,
+        data_I1 => const,
+        data_O0 => mux_1_out_s
+    );
+    
+    uc0: UC
+    port map
+    (
+        clk         => clk,
+        rst         => rst,
+        instruction => instruction_s,
+        data_in_pc  => data_in_pc_s,
+        data_out_pc => data_out_pc_s,
+        pc_att      => pc_en_s,
+        rom_read    => rom_read_s,
+        estado      => estado_s,
+        reg_wr      => reg_wr_en_s,
+        ULA_op      => ULA_op_s,
+        ULAsrcB     => ULAsrcB_s,
+        sel_regA    => sel_regA_s,
+        sel_regB    => sel_regB_s,
+        sel_reg_wr  => sel_reg_wr_s
+    );
+    
+    const <= ("000000000") & instruction_s(6 downto 0) when instruction_s(6) = '0' else
+             ("111111111") & instruction_s(6 downto 0);
+    
+    tl_estado <= estado_s;
+    tl_PC <= data_out_pc_s;
+    tl_instrucao <= instruction_s;
+    tl_Reg1_out <= regA_out_s;
+    tl_Reg2_out <= regB_out_s;
+    tl_ULA_out <= ULA_out_s;
 
 end architecture a_Processador;

@@ -1,12 +1,30 @@
 # auto-generated
 [Libraries]
 work.files = [
+	'BancoRegistradores.vhd',
+	'MaquinaEstados.vhd',
+	'PC.vhd',
+	'Processador.vhd',
+	'Processador_tb.vhd',
+	'ROM.vhd',
+	'UC.vhd',
 	'ULA.vhd',
-	'ULA_tb.vhd'
+	'ULA_tb.vhd',
+	'mux2x1.vhd',
+	'reg16bits.vhd'
 ]
 [libraries.work]
 files = [
+	'BancoRegistradores.vhd',
+	'MaquinaEstados.vhd',
+	'PC.vhd',
+	'Processador.vhd',
+	'Processador_tb.vhd',
+	'ROM.vhd',
+	'UC.vhd',
 	'ULA.vhd',
-	'ULA_tb.vhd'
+	'ULA_tb.vhd',
+	'mux2x1.vhd',
+	'reg16bits.vhd'
 ]
 # auto-generated-end
