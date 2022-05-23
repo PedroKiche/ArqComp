@@ -10,7 +10,7 @@ entity UC is
         data_out_pc: in unsigned(7 downto 0);
         pc_att: out STD_LOGIC;
         rom_read: out STD_LOGIC;
-        estado: in unsigned(1 downto 0);        
+        estado: in unsigned(1 downto 0);
         reg_wr: out STD_LOGIC;
         ULA_op: out unsigned(1 downto 0);
         ULAsrcB: out STD_LOGIC;
@@ -38,7 +38,7 @@ begin
               "11"; -- maior que
     
     sel_regA <= "000" when opcode(4 downto 3) = "11" else
-                 instruction(9 downto 7);
+    instruction(9 downto 7);
     
     sel_regB <= instruction(6 downto 4);
     
