@@ -11,7 +11,8 @@ work.files = [
 	'ULA.vhd',
 	'ULA_tb.vhd',
 	'mux2x1.vhd',
-	'reg16bits.vhd'
+	'reg16bits.vhd',
+	'reg1bit.vhd'
 ]
 [libraries.work]
 files = [
@@ -25,6 +26,7 @@ files = [
 	'ULA.vhd',
 	'ULA_tb.vhd',
 	'mux2x1.vhd',
-	'reg16bits.vhd'
+	'reg16bits.vhd',
+	'reg1bit.vhd'
 ]
 # auto-generated-end

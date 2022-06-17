@@ -17,6 +17,16 @@ entity Processador is
 end entity Processador;
 
 architecture a_Processador of Processador is
+    component reg1bit is
+        port
+        (
+            clk      : IN STD_LOGIC ;
+            rst      : IN STD_LOGIC ;
+            wr_en    : IN STD_LOGIC ;
+            data_in  : IN STD_LOGIC ;
+            data_out : OUT STD_LOGIC
+        );
+    end component;
     component MaquinaEstados is
         port
         (
@@ -68,7 +78,7 @@ architecture a_Processador of Processador is
             ula_in_A         : IN unsigned (15 downto 0);
             ula_in_B         : IN unsigned (15 downto 0);
             ula_out          : OUT unsigned (15 downto 0);
-            ula_greater_flag : OUT STD_LOGIC ;
+            ula_flag         : OUT STD_LOGIC ;
             sel_op           : IN unsigned (1 downto 0)
         );
     end component;
@@ -99,21 +109,37 @@ architecture a_Processador of Processador is
             ULAsrcB     : OUT STD_LOGIC ;
             sel_regA    : OUT unsigned (2 downto 0);
             sel_regB    : OUT unsigned (2 downto 0);
-            sel_reg_wr  : OUT unsigned (2 downto 0)
+            sel_reg_wr  : OUT unsigned (2 downto 0);
+            jump_en     : OUT STD_LOGIC;
+            reg_wr_cc   : out STD_LOGIC;
+            branch_en   : out STD_LOGIC
         );
     end component;
     
     signal estado_s, ULA_op_s: unsigned(1 downto 0);
-    signal pc_en_s,rom_read_s, reg_wr_en_s: STD_LOGIC;
+    signal pc_en_s,rom_read_s, reg_wr_en_s, jump_en_s, reg_wr_cc_s: STD_LOGIC;
     signal data_in_pc_s, data_out_pc_s: unsigned(7 downto 0);
     signal sel_reg_wr_s, sel_regA_s, sel_regB_s: unsigned(2 downto 0);
     signal regA_out_s, regB_out_s, ULA_out_s, instruction_s:unsigned(15 downto 0);
     signal mux_1_out_s: unsigned(15 downto 0);
-    signal ULA_out_logic_s: STD_LOGIC;
+    signal ULA_out_logic_s, flag_c_out_s: STD_LOGIC;
     signal ULAsrcB_s: STD_LOGIC;
     signal const: unsigned(15 downto 0);
+    signal branch_offset: unsigned(7 downto 0);
+    signal branch_en_s: STD_LOGIC;
     
 begin
+    flag_c: reg1bit
+    port map
+    (
+        clk      => clk,
+        rst      => rst,
+        wr_en    => reg_wr_cc_s,
+        data_in  => ULA_out_logic_s,
+        data_out => flag_c_out_s
+    );
+
+    
     maqEstado0: MaquinaEstados
     port map
     (
@@ -161,7 +187,7 @@ begin
         ula_in_A         => regA_out_s,
         ula_in_B         => mux_1_out_s,
         ula_out          => ULA_out_s,
-        ula_greater_flag => ULA_out_logic_s,
+        ula_flag         => ULA_out_logic_s,
         sel_op           => ULA_op_s
     );
     
@@ -190,11 +216,20 @@ begin
         ULAsrcB     => ULAsrcB_s,
         sel_regA    => sel_regA_s,
         sel_regB    => sel_regB_s,
-        sel_reg_wr  => sel_reg_wr_s
+        sel_reg_wr  => sel_reg_wr_s,
+        jump_en     => jump_en_s,
+        reg_wr_cc   => reg_wr_cc_s,
+        branch_en   => branch_en_s
     );
     
-    const <= ("000000000") & instruction_s(6 downto 0) when instruction_s(6) = '0' else
-             ("111111111") & instruction_s(6 downto 0);
+    const <= ("0000000") & instruction_s(8 downto 0) when instruction_s(8) = '0' else
+             ("1111111") & instruction_s(8 downto 0);
+    
+    branch_offset <= instruction_s(7 downto 0);
+    
+    data_in_pc_s <= data_out_pc_s + branch_offset when flag_c_out_s = '1' and branch_en_s = '1' else
+                    instruction_s(7 downto 0) when jump_en_s = '1'
+                    else data_out_pc_s+1;
     
     tl_estado <= estado_s;
     tl_PC <= data_out_pc_s;

@@ -14,38 +14,45 @@ entity UC is
         reg_wr: out STD_LOGIC;
         ULA_op: out unsigned(1 downto 0);
         ULAsrcB: out STD_LOGIC;
-        sel_regA, sel_regB, sel_reg_wr: out unsigned(2 downto 0)
+        sel_regA, sel_regB, sel_reg_wr: out unsigned(2 downto 0);
+        jump_en: out STD_LOGIC;
+        branch_en: out STD_LOGIC;
+        reg_wr_cc: out STD_LOGIC
     );
 end entity UC;
 
-
 architecture a_UC of UC is
-    signal opcode: unsigned(5 downto 0);
-    signal jump_en: STD_LOGIC;
+    signal opcode: unsigned(3 downto 0);
+    signal func: unsigned(2 downto 0);
 begin
     pc_att <= '1' when estado = "00" else '0';
     rom_read <= '1' when estado = "01" else '0';
     
-    opcode <= instruction(15 downto 10);
+    opcode <= instruction(15 downto 12);
     
-    jump_en <= '1' when opcode="011111" else '0'; --jump
+    func <= instruction(5 downto 3) when opcode ="0000" else "000";
     
-    data_in_pc <= instruction(7 downto 0) when jump_en = '1' else data_out_pc+1;
+    jump_en <= '1' when opcode="1111" else '0'; --jump
     
-    ULA_op <= "00" when opcode(1 downto 0) ="00" else -- soma
-              "01" when opcode(1 downto 0) ="01" else -- sub
-              "10" when opcode(1 downto 0) ="10" else -- and
-              "11"; -- maior que
+    reg_wr_cc <= '1' when opcode ="1011" or func = "011" else '0';
     
-    sel_regA <= "000" when opcode(4 downto 3) = "11" else
-    instruction(9 downto 7);
+    ULA_op <= "11" when opcode ="1011" or func = "011" else -- compara
+              "01" when opcode ="1001" or func = "001" else -- sub
+              "10" when opcode ="1010" or func = "010" else -- and
+              "00";                                         -- soma
     
-    sel_regB <= instruction(6 downto 4);
+    sel_regA <= "000" when opcode = "1100" or func = "100"  else
+    instruction(11 downto 9);
     
-    sel_reg_wr <= instruction(9 downto 7);
+    sel_regB <= instruction(8 downto 6);
     
-    ULAsrcB <= opcode(2);
+    sel_reg_wr <= instruction(11 downto 9);
     
-    reg_wr <= opcode(5) when estado ="10" else '0';
+    ULAsrcB <= '0' when opcode = "0000" else '1';
+    
+    branch_en <= '1' when opcode = "1101" else '0';
+    
+    reg_wr <= '0' when opcode = "1111" or opcode = "1011" or opcode = "0111" or func= "011"  else 
+              '0' when estado /= "01" else '1';
     
 end architecture a_UC;
