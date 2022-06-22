@@ -113,7 +113,8 @@ architecture a_Processador of Processador is
             jump_en     : OUT STD_LOGIC ;
             branch_en   : OUT STD_LOGIC ;
             reg_wr_cc   : OUT STD_LOGIC ;
-            ram_wr      : OUT STD_LOGIC
+            ram_wr      : OUT STD_LOGIC;
+            sel_banco_in : OUT STD_LOGIC
         );
     end component;
     
@@ -247,7 +248,8 @@ begin
         jump_en     => jump_en_s,
         reg_wr_cc   => reg_wr_cc_s,
         branch_en   => branch_en_s,
-        ram_wr => sel_ram_s
+        ram_wr      => wr_en_ram_s,
+        sel_banco_in => sel_ram_s
     );
     ram0: ram
     port map
@@ -262,6 +264,7 @@ begin
     const <= ("0000000") & instruction_s(8 downto 0) when instruction_s(8) = '0' and wr_en_ram_s = '0' else
              ("1111111") & instruction_s(8 downto 0) when  wr_en_ram_s = '0' else
              "0000000000000000";
+
     endereco_ram_s <= regB_out_s(6 downto 0);
     
     branch_offset <= instruction_s(7 downto 0);

@@ -1,0 +1,40 @@
+v 4
+file . "ULA.vhd" "f514b4e90a923b6f03c790802c0f2740c6052d9b" "20220622214843.149":
+  entity ula at 4( 69) + 0 on 135;
+  architecture a_ula of ula at 26( 527) + 0 on 136;
+file . "UC.vhd" "513f43898d4ef3a454a6afe95e8f51a7ccdb9ae0" "20220622214842.873":
+  entity uc at 1( 0) + 0 on 131;
+  architecture a_uc of uc at 26( 754) + 0 on 132;
+file . "reg16bits.vhd" "15db4e9b20e0da136acbdcfd5f364c4dadd19934" "20220622214842.527":
+  entity reg16bits at 1( 0) + 0 on 127;
+  architecture a_reg16bits of reg16bits at 15( 315) + 0 on 128;
+file . "Processador.vhd" "d188548c4c2221d7fec1fc1d3898855abe24ad41" "20220622214842.244":
+  entity processador at 1( 0) + 0 on 123;
+  architecture a_processador of processador at 19( 493) + 0 on 124;
+file . "PC.vhd" "cb4af0cfe95f8ccf079d870ea035d6d67d6ea184" "20220622214841.922":
+  entity pc at 1( 0) + 0 on 119;
+  architecture a_pc of pc at 16( 370) + 0 on 120;
+file . "MaquinaEstados.vhd" "b85bd53f800f05fd6b6b785f4ba4bebc25f9437e" "20220622214841.662":
+  entity maquinaestados at 1( 0) + 0 on 115;
+  architecture a_maquinaestados of maquinaestados at 13( 249) + 0 on 116;
+file . "BancoRegistradores.vhd" "8a215debf2e4178bada37ca040d71fb221a83f88" "20220622214841.495":
+  entity bancoregistradores at 1( 0) + 0 on 113;
+  architecture a_bancoregistradores of bancoregistradores at 22( 571) + 0 on 114;
+file . "mux2x1.vhd" "8e080e9c8002576d912dfba26d4bc66e56069e59" "20220622214841.795":
+  entity mux2x1 at 1( 0) + 0 on 117;
+  architecture a_mux2x1 of mux2x1 at 13( 288) + 0 on 118;
+file . "Processador_tb.vhd" "8b9f1caeb7e05415b111c92542afb71da433330d" "20220622214842.090":
+  entity processador_tb at 1( 0) + 0 on 121;
+  architecture a_processador_tb of processador_tb at 8( 130) + 0 on 122;
+file . "reg1bit.vhd" "b447486e1f862d2fae87943bc3a60162fe7f6751" "20220622214842.380":
+  entity reg1bit at 1( 0) + 0 on 125;
+  architecture a_reg1bit of reg1bit at 15( 286) + 0 on 126;
+file . "ROM.vhd" "9298705fdb25e39b422cdf61eb0be169aa357ce1" "20220622214842.692":
+  entity rom at 1( 0) + 0 on 129;
+  architecture a_rom of rom at 14( 276) + 0 on 130;
+file . "ULA_tb.vhd" "583bd1e94c461e3d36b28e9767639cedd4082332" "20220622214842.987":
+  entity ula_tb at 1( 0) + 0 on 133;
+  architecture a_ula_tb of ula_tb at 8( 114) + 0 on 134;
+file . "ram.vhd" "e06c67cc7da1cd9d11db575b503f9fbef02ef21c" "20220622214843.367":
+  entity ram at 1( 0) + 0 on 137;
+  architecture ram_a of ram at 16( 325) + 0 on 138;

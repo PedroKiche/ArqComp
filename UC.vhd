@@ -18,7 +18,8 @@ entity UC is
         jump_en: out STD_LOGIC;
         branch_en: out STD_LOGIC;
         reg_wr_cc: out STD_LOGIC;
-        ram_wr: out STD_LOGIC
+        ram_wr: out STD_LOGIC;
+        sel_banco_in: out STD_LOGIC
     );
 end entity UC;
 
@@ -59,5 +60,6 @@ begin
     
     ram_wr <= '1' when opcode = "1110" and func = "110" else '0' ;
     
+    sel_banco_in <= '1' when opcode = "1110" and func = "101" else '0';
     
 end architecture a_UC;
