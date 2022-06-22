@@ -14,7 +14,7 @@ end entity ROM;
 architecture a_ROM of ROM is
     type mem is array (0 to 127) of unsigned(15 downto 0);
     constant rom_content : mem := (
-        0=> B"0111000000000000",
+        0=> B"1100_011_000000010",   -- MOVE 2, $R3
         1=> B"1100_011_000000000",   -- MOVE 0, $R3
         2=> B"1100_100_000000000",   -- MOVE 0, $R3
         3=> B"0000_100_011_000_000", -- ADD $R4,$R3

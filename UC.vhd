@@ -25,8 +25,8 @@ architecture a_UC of UC is
     signal opcode: unsigned(3 downto 0);
     signal func: unsigned(2 downto 0);
 begin
-    pc_att <= '1' when estado = "00" else '0';
-    rom_read <= '1' when estado = "01" else '0';
+    pc_att <= '1' when estado = "01" else '0';
+    rom_read <= '1' when estado = "00" else '0';
     
     opcode <= instruction(15 downto 12);
     
@@ -34,7 +34,7 @@ begin
     
     jump_en <= '1' when opcode="1111" else '0'; --jump
     
-    reg_wr_cc <= '1' when opcode ="1011" or func = "011" else '0';
+    reg_wr_cc <= '0' when opcode = "1111" or opcode = "0111" or opcode = "1101"  else '1';
     
     ULA_op <= "11" when opcode ="1011" or func = "011" else -- compara
               "01" when opcode ="1001" or func = "001" else -- sub
@@ -52,7 +52,7 @@ begin
     
     branch_en <= '1' when opcode = "1101" else '0';
     
-    reg_wr <= '0' when opcode = "1111" or opcode = "1011" or opcode = "0111" or func= "011"  else 
-              '0' when estado /= "01" else '1';
+    reg_wr <= '0' when opcode = "1111" or opcode = "1011" or opcode = "0111" or func= "011" or opcode = "1101" else
+    '0' when estado /= "01" else '1';
     
 end architecture a_UC;
