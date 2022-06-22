@@ -17,7 +17,8 @@ entity UC is
         sel_regA, sel_regB, sel_reg_wr: out unsigned(2 downto 0);
         jump_en: out STD_LOGIC;
         branch_en: out STD_LOGIC;
-        reg_wr_cc: out STD_LOGIC
+        reg_wr_cc: out STD_LOGIC;
+        ram_wr: out STD_LOGIC
     );
 end entity UC;
 
@@ -30,7 +31,7 @@ begin
     
     opcode <= instruction(15 downto 12);
     
-    func <= instruction(5 downto 3) when opcode ="0000" else "000";
+    func <= instruction(5 downto 3) when opcode ="0000" or opcode = "1110" else "000";
     
     jump_en <= '1' when opcode="1111" else '0'; --jump
     
@@ -42,7 +43,8 @@ begin
               "00";                                         -- soma
     
     sel_regA <= "000" when opcode = "1100" or func = "100"  else
-    instruction(11 downto 9);
+                "000" when opcode = "1110" and func = "101" else
+                instruction(11 downto 9);
     
     sel_regB <= instruction(8 downto 6);
     
@@ -52,7 +54,10 @@ begin
     
     branch_en <= '1' when opcode = "1101" else '0';
     
-    reg_wr <= '0' when opcode = "1111" or opcode = "1011" or opcode = "0111" or func= "011" or opcode = "1101" else
+    reg_wr <= '0' when opcode = "1111" or opcode = "1011" or opcode = "0111" or func= "011" or opcode = "1101" or (opcode = "1110" and func = "110") else
     '0' when estado /= "01" else '1';
+    
+    ram_wr <= '1' when opcode = "1110" and func = "110" else '0' ;
+    
     
 end architecture a_UC;

@@ -11,6 +11,7 @@ work.files = [
 	'ULA.vhd',
 	'ULA_tb.vhd',
 	'mux2x1.vhd',
+	'ram.vhd',
 	'reg16bits.vhd',
 	'reg1bit.vhd'
 ]
@@ -26,6 +27,7 @@ files = [
 	'ULA.vhd',
 	'ULA_tb.vhd',
 	'mux2x1.vhd',
+	'ram.vhd',
 	'reg16bits.vhd',
 	'reg1bit.vhd'
 ]

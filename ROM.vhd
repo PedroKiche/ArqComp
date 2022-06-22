@@ -39,7 +39,7 @@ architecture a_ROM of ROM is
         others => (others => '0')
     );
 begin
-    process(clk)
+    process(clk,rom_read)
     begin
         if(rom_read = '1') then
             if rising_edge(clk) then

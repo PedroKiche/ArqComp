@@ -110,9 +110,21 @@ architecture a_Processador of Processador is
             sel_regA    : OUT unsigned (2 downto 0);
             sel_regB    : OUT unsigned (2 downto 0);
             sel_reg_wr  : OUT unsigned (2 downto 0);
-            jump_en     : OUT STD_LOGIC;
-            reg_wr_cc   : out STD_LOGIC;
-            branch_en   : out STD_LOGIC
+            jump_en     : OUT STD_LOGIC ;
+            branch_en   : OUT STD_LOGIC ;
+            reg_wr_cc   : OUT STD_LOGIC ;
+            ram_wr      : OUT STD_LOGIC
+        );
+    end component;
+    
+    component ram is
+        port
+        (
+            clk      : IN STD_LOGIC ;
+            endereco : IN unsigned (6 downto 0);
+            wr_en    : IN STD_LOGIC ;
+            dado_in  : IN unsigned (15 downto 0);
+            dado_out : OUT unsigned (15 downto 0)
         );
     end component;
     
@@ -127,6 +139,11 @@ architecture a_Processador of Processador is
     signal const: unsigned(15 downto 0);
     signal branch_offset: unsigned(7 downto 0);
     signal branch_en_s: STD_LOGIC;
+    signal wr_en_ram_s: STD_LOGIC;
+    signal dado_out_ram_s: unsigned(15 downto 0);
+    signal endereco_ram_s: unsigned(6 downto 0);
+    signal data_in_banco_s: unsigned(15 downto 0);
+    signal sel_ram_s: STD_LOGIC;
     
 begin
     flag_c: reg1bit
@@ -176,7 +193,7 @@ begin
         sel_reg_write => sel_reg_wr_s,
         sel_regA_read => sel_regA_s,
         sel_regB_read => sel_regB_s,
-        data_in_banco => ULA_out_s,
+        data_in_banco => data_in_banco_s,
         data_out_regA => regA_out_s,
         data_out_regB => regB_out_s
     );
@@ -200,6 +217,16 @@ begin
         data_O0 => mux_1_out_s
     );
     
+    mux2x1_2: mux2x1
+    port map
+    (
+        sel     => sel_ram_s,
+        data_I0 => ULA_out_s,
+        data_I1 => dado_out_ram_s,
+        data_O0 => data_in_banco_s
+    );
+
+    
     uc0: UC
     port map
     (
@@ -219,17 +246,29 @@ begin
         sel_reg_wr  => sel_reg_wr_s,
         jump_en     => jump_en_s,
         reg_wr_cc   => reg_wr_cc_s,
-        branch_en   => branch_en_s
+        branch_en   => branch_en_s,
+        ram_wr => sel_ram_s
     );
-    
-    const <= ("0000000") & instruction_s(8 downto 0) when instruction_s(8) = '0' else
-             ("1111111") & instruction_s(8 downto 0);
+    ram0: ram
+    port map
+    (
+        clk      => clk,
+        endereco => endereco_ram_s,
+        wr_en    => wr_en_ram_s,
+        dado_in  => ULA_out_s,
+        dado_out => dado_out_ram_s
+    );
+
+    const <= ("0000000") & instruction_s(8 downto 0) when instruction_s(8) = '0' and wr_en_ram_s = '0' else
+             ("1111111") & instruction_s(8 downto 0) when  wr_en_ram_s = '0' else
+             "0000000000000000";
+    endereco_ram_s <= regB_out_s(6 downto 0);
     
     branch_offset <= instruction_s(7 downto 0);
     
     data_in_pc_s <= data_out_pc_s + branch_offset when flag_c_out_s = '1' and branch_en_s = '1' else
-                    instruction_s(7 downto 0) when jump_en_s = '1'
-                    else data_out_pc_s+1;
+    instruction_s(7 downto 0) when jump_en_s = '1'
+else data_out_pc_s+1;
     
     tl_estado <= estado_s;
     tl_PC <= data_out_pc_s;
