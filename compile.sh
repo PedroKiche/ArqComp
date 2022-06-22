@@ -1,7 +1,4 @@
-# ArqComp
-Processador em VHDL da matéria Arquitetura e Organização de Computadores
-
-para compilar no vscode, utilize os seguintes comandos
+#!/bin/bash
 
 ghdl -a BancoRegistradores.vhd
 ghdl -a MaquinaEstados.vhd
